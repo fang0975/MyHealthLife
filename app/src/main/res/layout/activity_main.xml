@@ -8,7 +8,7 @@
     tools:context="com.example.honor.myhealthlife.MainActivity">
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/textViewTime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
@@ -29,7 +29,7 @@
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="100dp"
         android:layout_weight="1"
         android:layout_margin="10dp"
         app:srcCompat="@drawable/home" />
@@ -48,7 +48,8 @@
             android:layout_margin="8dp"
             android:layout_weight="1"
             android:text="計算bmi"
-            android:textSize="15sp" />
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/btnBMR"
@@ -57,7 +58,8 @@
             android:layout_margin="8dp"
             android:layout_weight="1"
             android:text="計算bmr"
-            android:textSize="15sp" />
+            android:textSize="16sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <TextView
