@@ -3,7 +3,9 @@ package com.example.honor.myhealthlife;
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,17 +13,21 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Locale;
+
 /**
  * Created by Honor on 2018/4/17.
  */
 
-public class CalculateBMIActivity extends AppCompatActivity {
+public class CalculateBMIActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
     EditText mEdtName, mEdtHeight, mEdtWeight, mEdtWaistsize;
     Button mBtnCalculate, mBtnBack;
     SharedPreferences userInfo;
     TextView mTextResult;
     RadioGroup mRdgMale, mRdgFemale;
     private RadioGroup mRdgGroupSex;
+    private TextToSpeech tts;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +45,8 @@ public class CalculateBMIActivity extends AppCompatActivity {
         mEdtWeight.setText(Preference.getString(this, "weight", ""));
         mEdtHeight.setText(Preference.getString(this, "height", ""));
         mEdtWaistsize.setText(Preference.getString(this, "waistSize", ""));
+        tts = new TextToSpeech(this,this);
+        getSupportActionBar().setTitle("計算BMI-身體質量指數");
         switch (Preference.getString(this, "sex", "")) {
             case "先生":
                 mRdgGroupSex.check(R.id.RdgMale);
@@ -49,7 +57,6 @@ public class CalculateBMIActivity extends AppCompatActivity {
             default:
                 break;
         }
-
         mBtnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -125,8 +132,33 @@ public class CalculateBMIActivity extends AppCompatActivity {
             Preference.setString(this, "weight", weight);
             Preference.setString(this, "height", height);
             Preference.setString(this, "waistSize", waistSize);
+            tts.speak(mTextResult.getText().toString(),TextToSpeech.QUEUE_FLUSH,null);
+        }
+    }
+    public void onInit(int status) {
+        // TODO Auto-generated method stub
+        if (status == TextToSpeech.SUCCESS) {
+            int result = tts.setLanguage(Locale.TAIWAN);    //設定語言為英文
+            if (result == TextToSpeech.LANG_MISSING_DATA
+                    || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                Log.e("TTS", "This Language is not supported");
+            } else {
+                tts.setPitch(1);    //語調(1為正常語調；0.5比正常語調低一倍；2比正常語調高一倍)
+                tts.setSpeechRate(1);    //速度(1為正常速度；0.5比正常速度慢一倍；2比正常速度快一倍)
+            }
+        } else {
+            Log.e("TTS", "Initilization Failed!");
         }
     }
 
+    @Override
+    public void onDestroy() {
+        // shutdown tts
+        super.onDestroy();
+        if (tts != null) {
+            tts.stop();
+            tts.shutdown();
+        }
+    }
 
 }
